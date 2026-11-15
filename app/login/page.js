@@ -83,7 +83,6 @@ export default function LoginPage() {
           </form>
 
           <p className="auth-footnote">{isRegister ? "Already have an account? " : "New to FixMate? "}<button type="button" onClick={() => changeMode(isRegister ? "login" : "register")}>{isRegister ? "Sign in" : "Create an account"}</button></p>
-          {!isRegister && <p className="admin-login-note">Admin? Sign in with the credentials from your <code>.env.local</code> file.</p>}
           <div className="auth-form-footer"><span>SECURE ACCOUNT ACCESS</span><span>FIXMATE © 2026</span></div>
         </div>
       </section>
