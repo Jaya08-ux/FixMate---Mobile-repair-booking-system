@@ -6,7 +6,7 @@ import { useState } from "react";
 
 export default function BookPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ device: "", repairType: "", issue: "", date: "", time: "10:00 AM – 12:00 PM" });
+  const [form, setForm] = useState({ device: "", repairType: "", issue: "", date: "", time: "10:00 AM – 12:00 PM", pickupLocation: "", customPickupLocation: "" });
   const [error, setError] = useState("");
   const today = new Date().toISOString().slice(0, 10);
   function update(event) { setForm({ ...form, [event.target.name]: event.target.value }); }
@@ -21,6 +21,8 @@ export default function BookPage() {
         <label>Device *<select name="device" value={form.device} onChange={update} required><option value="">Choose your device</option><option>iPhone</option><option>Samsung Galaxy</option><option>Google Pixel</option><option>OnePlus</option><option>Other smartphone</option></select></label>
         <label>Repair type *<select name="repairType" value={form.repairType} onChange={update} required><option value="">Choose the closest issue</option><option value="screen">Screen repair</option><option value="battery">Battery replacement</option><option value="charging">Charging port</option><option value="camera">Camera repair</option><option value="water">Water damage</option><option value="other">Other / diagnosis needed</option></select></label>
         <label>What needs fixing? *<textarea name="issue" value={form.issue} onChange={update} required rows="3" placeholder="Add details about the problem…" /></label>
+        <label>Phone pickup location *<select name="pickupLocation" value={form.pickupLocation} onChange={update} required><option value="">Choose a pickup location</option><option>Phagwara</option><option>Lawgate</option><option>LPU Main Gate</option><option>LPU Mall</option><option>Other</option></select></label>
+        {form.pickupLocation === "Other" && <label>Enter your pickup location *<input name="customPickupLocation" value={form.customPickupLocation} onChange={update} required maxLength={160} placeholder="Enter area, landmark, or address" /></label>}
         <div className="field-row"><label>Preferred date *<input name="date" type="date" min={today} value={form.date} onChange={update} required /></label><label>Drop-off time<select name="time" value={form.time} onChange={update}><option>10:00 AM – 12:00 PM</option><option>12:00 PM – 2:00 PM</option><option>2:00 PM – 4:00 PM</option><option>4:00 PM – 6:00 PM</option><option>Flexible</option></select></label></div>
         <button className="button button-primary form-submit" type="submit">See estimate & payment options<span>↗</span></button><p className="form-footnote">Estimate is approximate; technician confirms final price after inspection.</p>
       </form></div></div>

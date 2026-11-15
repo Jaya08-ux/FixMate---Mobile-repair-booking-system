@@ -10,6 +10,17 @@ export default function ClientDashboard() {
   const [bookingView, setBookingView] = useState("active");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [bookingNotice, setBookingNotice] = useState("");
+
+  useEffect(() => {
+    const notice = sessionStorage.getItem("fixmate-booking-success");
+    if (notice) {
+      setBookingNotice(notice);
+      sessionStorage.removeItem("fixmate-booking-success");
+      const timer = window.setTimeout(() => setBookingNotice(""), 6000);
+      return () => window.clearTimeout(timer);
+    }
+  }, []);
 
   useEffect(() => {
     fetch("/api/auth/me").then(async (response) => {
@@ -27,6 +38,7 @@ export default function ClientDashboard() {
   const visibleBookings = bookingView === "active" ? active : bookings;
   return (
     <div className="dashboard-page wrap">
+      {bookingNotice && <div className="booking-success-toast" role="status"><span>✓</span>{bookingNotice}</div>}
       <div className="dashboard-topline"><div><span className="eyebrow">CLIENT SPACE</span><h1>Hey, {user?.name?.split(" ")[0] || "there"} <span>✳</span></h1><p>Here’s what’s happening with your repairs.</p></div><Link className="button button-primary" href="/client/book">+ New booking</Link></div>
       <div className="dashboard-stats"><button type="button" aria-pressed={bookingView === "active"} onClick={() => setBookingView("active")} className={`stat-card stat-card-button ${bookingView === "active" ? "stat-dark" : ""}`}><span>ACTIVE REPAIRS</span><strong>{active.length.toString().padStart(2, "0")}</strong><small>Currently in the workshop</small><i>⌁</i></button><button type="button" aria-pressed={bookingView === "all"} onClick={() => setBookingView("all")} className={`stat-card stat-card-button ${bookingView === "all" ? "stat-dark" : ""}`}><span>ALL BOOKINGS</span><strong>{bookings.length.toString().padStart(2, "0")}</strong><small>Your repair history</small><i>↗</i></button><article className="stat-card"><span>YOUR ACCOUNT</span><strong className="stat-avatar">{user?.name?.[0] || "•"}</strong><small>{user?.email || "Loading account…"}</small><i>✳</i></article></div>
       <section className="panel"><div className="panel-heading"><div><span className="eyebrow">YOUR ACTIVITY</span><h2>{bookingView === "active" ? "Active repairs" : "All bookings"}</h2></div><span className="subtle-count">{visibleBookings.length} shown</span></div>

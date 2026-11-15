@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createBooking, listBookings } from "../../../lib/bookings";
 import { getCurrentUser } from "../../../lib/auth";
 import { estimateRepair } from "../../../lib/pricing";
+import { resolvePickupLocation } from "../../../lib/locations";
 
 export async function GET() {
   try {
@@ -24,7 +25,9 @@ export async function POST(request) {
     if (required.some((field) => !String(body[field] || "").trim())) {
       return NextResponse.json({ error: "Please complete all required fields." }, { status: 400 });
     }
-    const booking = await createBooking({ user, device: String(body.device), issue: String(body.issue), repairType: String(body.repairType || "other"), estimatedAmount: estimateRepair(String(body.repairType || "other")), paymentMethod: "COD", paymentStatus: "Due on completion", date: String(body.date), time: String(body.time || "Flexible") });
+    const pickupLocation = resolvePickupLocation(body);
+    if (!pickupLocation) return NextResponse.json({ error: "Please select or enter a valid phone pickup location." }, { status: 400 });
+    const booking = await createBooking({ user, device: String(body.device), issue: String(body.issue), repairType: String(body.repairType || "other"), estimatedAmount: estimateRepair(String(body.repairType || "other")), paymentMethod: "COD", paymentStatus: "Due on completion", pickupLocation, date: String(body.date), time: String(body.time || "Flexible") });
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {
     console.error("Could not create booking:", error);
